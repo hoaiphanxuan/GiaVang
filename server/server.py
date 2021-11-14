@@ -32,5 +32,5 @@ try:
             break
 except: #Bắt trường hợp client đóng kết nối đột ngột
     print("Error")
-
+#...
 clientConnection.close()
