@@ -11,7 +11,7 @@ hostPort=int(input('Chon Port muon su dung:'))
 
 
 soc=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
-#Ràng buộc địa chỉ (tên máy chủ, số cổng) vào socket.
+#Ràng buộc địa chỉ (tên máy chủ, số cổng) vào socket.s
 soc.bind((hostAdd,hostPort))
 soc.listen(1)
 
