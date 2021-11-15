@@ -10,7 +10,7 @@ print("Host Add "+hostAdd)
 
 # hostPort=int(input('Chon Port muon su dung:'))
 
-hostPort=62000
+hostPort=65000
 
 soc=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
 #Ràng buộc địa chỉ (tên máy chủ, số cổng) vào socket.s
