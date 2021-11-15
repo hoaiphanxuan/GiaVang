@@ -1,3 +1,4 @@
+from typing import Tuple
 import pyodbc
 import socket
 import threading
@@ -7,30 +8,76 @@ hostAdd=socket.gethostbyname(hostName)
 print("Host name "+hostName)
 print("Host Add "+hostAdd)
 
-hostPort=int(input('Chon Port muon su dung:'))
+# hostPort=int(input('Chon Port muon su dung:'))
 
+hostPort=62000
 
 soc=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
 #Ràng buộc địa chỉ (tên máy chủ, số cổng) vào socket.s
 soc.bind((hostAdd,hostPort))
 soc.listen(1)
 
+def login(server):
+    username = server.recv(1024).decode()
+    server.sendall(username.encode())
+
+    password = server.recv(1024).decode()
+    server.sendall(password.encode())
+
+    print("Username: ", username)
+    print("Pass:", password)
+
+    check_Login(server,username,password)
+ 
+
+def check_Login(server,username, password):
+    conn = pyodbc.connect(
+        "driver={sql server native client 11.0};"
+        "server=laptop-ft73p7ud;"
+        "database=Gia_Vang;"
+        "trusted_connection=yes;"
+    )
+    cur=conn.cursor()
+    
+    temp =findUser(cur,username,password)
+    if(temp==1):
+        server.sendall("Dang nhap thanh cong".encode())
+        server.recv(1024)
+    elif(temp==0):
+        server.sendall('Khong tim thay tai khoan'.encode())
+        server.recv(1024)
+    else:
+        server.sendall('Mat khau khong dung'.encode())
+        server.recv(1024)
+        
+       
+def findUser(cur,username,password):
+    cur.execute("select pass from  Account where username=?",username)
+    for temp in cur:
+        print(temp)
+        str = temp[0]
+        
+        if(str==password):
+            return 1
+        elif(temp==''):
+            return 0
+        else:
+            return -1       
+
 
 try:
-    clientConnection, clientAdd =soc.accept()
+    server, clientAdd =soc.accept()
     print("Client Address: ",clientAdd)
-   
+    login(server)
     while(1):
-        msg=input("username:")
-        msg2=input("password:")
-        clientConnection.send(msg.encode())
-        clientConnection.send(msg2.encode())
-        msg=clientConnection.recv(1024).decode()
+        msg=server.recv(1024).decode()
         print("Client: "+msg)
 
+        msg = input("Server:")
+        server.sendall(msg.encode())
         if(msg=="x"):
             break
 except: #Bắt trường hợp client đóng kết nối đột ngột
     print("Error")
 #.
-clientConnection.close()
+server.close()
