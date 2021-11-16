@@ -30,6 +30,7 @@ def login(server):
     check_Login(server,username,password)
  
 
+
 def check_Login(server,username, password):
     conn = pyodbc.connect(
         "driver={sql server native client 11.0};"
@@ -39,7 +40,7 @@ def check_Login(server,username, password):
     )
     cur=conn.cursor()
     
-    temp =findUser(cur,username,password)
+    temp =findUserForLogIn(cur,username,password)
     if(temp==1):
         server.sendall("Dang nhap thanh cong".encode())
         server.recv(1024)
@@ -51,7 +52,7 @@ def check_Login(server,username, password):
         server.recv(1024)
         
        
-def findUser(cur,username,password):
+def findUserForLogIn(cur,username,password):
     cur.execute("select pass from  Account where username=?",username)
     for temp in cur:
         print(temp)
@@ -64,19 +65,74 @@ def findUser(cur,username,password):
         else:
             return -1       
 
+def signUp(server):
+    username = server.recv(1024).decode()
+    server.sendall(username.encode())
+
+    password = server.recv(1024).decode()
+    server.sendall(password.encode())
+
+    print("Username: ", username)
+    print("Pass:", password)
+
+    findAndInsertUserToSQL(server,username,password)
+
+def findAndInsertUserToSQL(server,username,password):
+    conn = pyodbc.connect(
+        "driver={sql server native client 11.0};"
+        "server=laptop-ft73p7ud;"
+        "database=Gia_Vang;"
+        "trusted_connection=yes;"
+    )
+    cur=conn.cursor()
+    cur.execute("select pass from Account where username=?",username)
+    temp=cur.fetchone()
+    if(temp==None):
+        cur.execute('insert into Account(username,pass) Values(?,?);',(username,password))
+        conn.commit()
+        conn.close()
+
+        server.sendall('Dang ky thanh cong'.encode())
+        server.recv(1024)
+    else:
+        server.sendall('Tai khoan da ton tai'.encode())
+        server.recv(1024)
+
+def chat(server):
+    while 1:
+        msg=server.recv(1024).decode()
+        print("Client: "+msg)
+
+        if(msg=='x'):
+            return
+
+        msg = input("Server:")
+        server.sendall(msg.encode())
+           
+        
+       
+ 
 
 try:
     server, clientAdd =soc.accept()
     print("Client Address: ",clientAdd)
-    login(server)
-    while(1):
-        msg=server.recv(1024).decode()
-        print("Client: "+msg)
+    
+    msg=server.recv(1024).decode()
+    server.sendall(msg.encode())
 
-        msg = input("Server:")
-        server.sendall(msg.encode())
-        if(msg=="x"):
-            break
+    if(msg=='login'):
+        login(server)
+    elif(msg=='sign up'):
+        signUp(server)
+    elif(msg=="x"):
+        pass
+    else:
+        chat(server)
+    chat(server)
+    
+        
+            
+        
 except: #Bắt trường hợp client đóng kết nối đột ngột
     print("Error")
 #.
