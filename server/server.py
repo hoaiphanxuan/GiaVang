@@ -17,6 +17,22 @@ soc=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
 soc.bind((hostAdd,hostPort))
 soc.listen(1)
 
+def handleClient(server,clientAdd):
+    print("Client Address: ",clientAdd)
+    
+    msg=server.recv(1024).decode()
+    server.sendall(msg.encode())
+
+    if(msg=='login'):
+        login(server)
+    elif(msg=='sign up'):
+        signUp(server)
+    elif(msg=="x"):
+        pass
+    else:
+        chat(server)
+    print("Client :",clientAdd , "end.")
+    soc.close()
 def login(server):
     username = server.recv(1024).decode()
     server.sendall(username.encode())
@@ -99,7 +115,7 @@ def findAndInsertUserToSQL(server,username,password):
         server.recv(1024)
 
 def chat(server):
-    while 1:
+    while (1):
         msg=server.recv(1024).decode()
         print("Client: "+msg)
 
@@ -110,30 +126,19 @@ def chat(server):
         server.sendall(msg.encode())
            
         
-       
- 
-
-try:
-    server, clientAdd =soc.accept()
-    print("Client Address: ",clientAdd)
-    
-    msg=server.recv(1024).decode()
-    server.sendall(msg.encode())
-
-    if(msg=='login'):
-        login(server)
-    elif(msg=='sign up'):
-        signUp(server)
-    elif(msg=="x"):
-        pass
-    else:
-        chat(server)
-    chat(server)
-    
-        
+nClient = 0
+while(nClient<10):       
+    try:
+        server, clientAdd =soc.accept()
+        handleClient(server,clientAdd)
+        thr = threading.Thread(target=handleClient, args=(server,clientAdd))
+        thr.daemon = False
+        thr.start()
             
-        
-except: #Bắt trường hợp client đóng kết nối đột ngột
-    print("Error")
-#.
-server.close()
+    except: #Bắt trường hợp client đóng kết nối đột ngột
+        print("Error")
+    nClient+=1
+
+print("End server")
+
+soc.close()

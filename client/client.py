@@ -3,7 +3,7 @@ FORMAT = "UTF8"
 # serverAdd = input("Server Add:")
 # serverPort = int(input("Server Port:"))
 
-serverAdd='192.168.1.9'
+serverAdd='192.168.255.1'
 serverPort=65000
 
 
@@ -64,18 +64,6 @@ try:
 
     print("Ket noi thanh cong")
 
-    option = input("TAC VU:")
-    client.send(option.encode(FORMAT))
-    client.recv(1024)
-    if(option=="login"):      
-        login(client)
-    elif(option=='sign up'):
-        signUp(client)
-    elif(option == 'x'):
-        pass
-    else:
-        chat(client)
-    chat(client)
 except:  # Bắt trường hợp server bị đóng
     print("Error")
 #.......
