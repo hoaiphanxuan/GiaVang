@@ -3,8 +3,8 @@ FORMAT = "UTF8"
 # serverAdd = input("Server Add:")
 # serverPort = int(input("Server Port:"))
 
-serverAdd='192.168.255.1'
-serverPort=65000
+serverAdd='192.168.1.6'
+serverPort=63213
 
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
@@ -51,18 +51,21 @@ def signUp(client):
 def chat(client):
     while(1):
             
-            msg = input('Client: ')
-            client.send(msg.encode(FORMAT))
-            msg=client.recv(1024).decode()
-            
-            print('Server:',msg)
-            if(msg == 'x'):
-                return
+        msg = input('Client: ')
+        client.send(msg.encode(FORMAT))
+        msg=client.recv(1024).decode()
+        
+        print('Server:',msg)
+        if(msg == 'x'):
+            return
 
 try:
     client.connect((serverAdd, serverPort))
-
-    print("Ket noi thanh cong")
+    client.send('sign up'.encode(FORMAT))
+    msg=client.recv(1024).decode()
+    signUp(client)
+    chat(client)
+    
 
 except:  # Bắt trường hợp server bị đóng
     print("Error")

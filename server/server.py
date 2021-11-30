@@ -1,5 +1,5 @@
 from typing import Tuple
-import pyodbc
+import json
 import socket
 import threading
 
@@ -10,7 +10,7 @@ print("Host Add "+hostAdd)
 
 # hostPort=int(input('Chon Port muon su dung:'))
 
-hostPort=65000
+hostPort=63213
 
 soc=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
 #Ràng buộc địa chỉ (tên máy chủ, số cổng) vào socket.s
@@ -29,8 +29,7 @@ def handleClient(server,clientAdd):
         signUp(server)
     elif(msg=="x"):
         pass
-    else:
-        chat(server)
+    chat(server)
     print("Client :",clientAdd , "end.")
     soc.close()
 def login(server):
@@ -43,43 +42,23 @@ def login(server):
     print("Username: ", username)
     print("Pass:", password)
 
-    check_Login(server,username,password)
- 
+    checkLogin(server,username,password)
 
-
-def check_Login(server,username, password):
-    conn = pyodbc.connect(
-        "driver={sql server native client 11.0};"
-        "server=laptop-ft73p7ud;"
-        "database=Gia_Vang;"
-        "trusted_connection=yes;"
-    )
-    cur=conn.cursor()
-    
-    temp =findUserForLogIn(cur,username,password)
-    if(temp==1):
-        server.sendall("Dang nhap thanh cong".encode())
-        server.recv(1024)
-    elif(temp==0):
-        server.sendall('Khong tim thay tai khoan'.encode())
-        server.recv(1024)
-    else:
-        server.sendall('Mat khau khong dung'.encode())
-        server.recv(1024)
-        
-       
-def findUserForLogIn(cur,username,password):
-    cur.execute("select pass from  Account where username=?",username)
-    for temp in cur:
-        print(temp)
-        str = temp[0]
-        
-        if(str==password):
-            return 1
-        elif(temp==''):
-            return 0
-        else:
-            return -1       
+   
+def checkLogin(server, username, password):
+    with open('account.json',encoding="utf-8") as acc:
+        data=json.load(acc)
+        for user in data:
+            if(user['username']==username and user['pass']==password):
+                server.sendall("Dang nhap thanh cong".encode())
+                server.recv(1024)
+            elif(user['username']==username):
+                server.sendall('Mat khau khong dung'.encode())
+                server.recv(1024)
+            else:
+                server.sendall('Khong tim thay tai khoan'.encode())
+                server.recv(1024)
+                      
 
 def signUp(server):
     username = server.recv(1024).decode()
@@ -91,28 +70,25 @@ def signUp(server):
     print("Username: ", username)
     print("Pass:", password)
 
-    findAndInsertUserToSQL(server,username,password)
+    findAndInsertUserToFile(server,username,password)
 
-def findAndInsertUserToSQL(server,username,password):
-    conn = pyodbc.connect(
-        "driver={sql server native client 11.0};"
-        "server=laptop-ft73p7ud;"
-        "database=Gia_Vang;"
-        "trusted_connection=yes;"
-    )
-    cur=conn.cursor()
-    cur.execute("select pass from Account where username=?",username)
-    temp=cur.fetchone()
-    if(temp==None):
-        cur.execute('insert into Account(username,pass) Values(?,?);',(username,password))
-        conn.commit()
-        conn.close()
-
-        server.sendall('Dang ky thanh cong'.encode())
-        server.recv(1024)
-    else:
-        server.sendall('Tai khoan da ton tai'.encode())
-        server.recv(1024)
+def findAndInsertUserToFile(server,username,password):
+    lisUser=[]
+    with open('account.json',mode='r+',encoding="utf-8") as acc:
+        data=json.load(acc)
+        for user in data:
+            if(user['username']==username):
+               server.sendall('Tài khoản đã tồn tại'.encode())
+               server.recv(1024)
+               return 0
+            else:
+                lisUser.append(user)
+        dic={"username":f"{username}","pass":f"{password}"}
+        lisUser.insert(0,dic)
+    with open('account.json',mode='w',encoding="utf-8") as acc:
+        json.dump(lisUser,acc)
+    server.sendall('Đăng ký tài khoản thành công'.encode())
+    server.recv(1024)
 
 def chat(server):
     while (1):
@@ -121,7 +97,6 @@ def chat(server):
 
         if(msg=='x'):
             return
-
         msg = input("Server:")
         server.sendall(msg.encode())
            
@@ -134,9 +109,15 @@ while(nClient<10):
         thr = threading.Thread(target=handleClient, args=(server,clientAdd))
         thr.daemon = False
         thr.start()
+
+        quit=input()
+        if(quit=='x'):
+            break;
             
     except: #Bắt trường hợp client đóng kết nối đột ngột
         print("Error")
+        soc.close()
+
     nClient+=1
 
 print("End server")
