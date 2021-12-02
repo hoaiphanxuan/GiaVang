@@ -10,4 +10,9 @@ def checkDataInFile():
     
 
 #gD.listValue
-checkDataInFile()
+with open('data.json',mode='r',encoding='utf-8') as file:
+    data=json.load(file)
+    print(data)
+
+with open('./data/20211201.json',mode='w',encoding='utf-8') as file:
+    file.write(str(data))

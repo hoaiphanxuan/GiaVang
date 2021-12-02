@@ -39,8 +39,8 @@ def checkExistFile():
 	if(os.path.isfile(filepath)==False):
 		dataWeb=getDataFromWeb()
 		with open(filepath,mode='w',encoding='UTF-8') as file:
-			#json.dump(dataWeb,file)
-			file.write(str(dataWeb))
+			json.dump(dataWeb,file)
+			#file.write(str(dataWeb))
 
 checkExistFile()
 
