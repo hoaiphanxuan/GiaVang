@@ -2,7 +2,9 @@ import requests, json
 import os
 from bs4 import BeautifulSoup
 from datetime import date
-
+import threading
+import time
+from threading import Thread
 
 def getDataFromWeb():
 	response = requests.get("https://tygia.com/json.php?ran=0&rate=0&gold=1&bank=VIETCOM&date=now")
@@ -20,18 +22,6 @@ def getDataFromWeb():
 	js2 = js1[0].get('value')
 	return js2
 
-	#listValue = []
-	#for value in js2:
-	#	listValue.append(value)
-	#return listValue
-
-
-#with open('data.json',mode='r',encoding='UTF-8') as data:
-#	getdata=json.load(data)
-#	print(getdata)
-
-
-
 def checkExistFile():
 	today=date.today()
 	d1=today.strftime("%Y%m%d")
@@ -41,11 +31,14 @@ def checkExistFile():
 		with open(filepath,mode='w',encoding='UTF-8') as file:
 			json.dump(dataWeb,file)
 			#file.write(str(dataWeb))
-
-checkExistFile()
-
-with open('data.json',mode='r',encoding='UTF-8') as data:
-	getdata=json.load(data)
-	if(getdata[0]['brand']=='Long Xyên'):
-		print('ok')
-
+			
+def updateDataEvery30Min(a):
+	while (1):
+		time.sleep(30*60)
+		dataWeb=getDataFromWeb()
+		today=date.today()
+		d1=today.strftime("%Y%m%d")
+		filepath='./data/'+d1+'.json'
+		dataWeb=getDataFromWeb()
+		with open(filepath,mode='w',encoding='UTF-8') as file:
+			json.dump(dataWeb,file)

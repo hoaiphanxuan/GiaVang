@@ -112,7 +112,7 @@ while(nClient<10):
 
         quit=input()
         if(quit=='x'):
-            break;
+            break
             
     except: #Bắt trường hợp client đóng kết nối đột ngột
         print("Error")
