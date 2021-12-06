@@ -1,18 +1,24 @@
 from datetime import date
 import json
-import getData
+import threading
+import time
+from threading import Thread
 
-def checkDataInFile():
-    today=date.today()
+def updateData(a):
+    while (a):
+        time.sleep(4)
+        print('do something')
+        
 
-    d1=today.strftime("%Y%m%d")
-    print(d1)
-    
 
-#gD.listValue
-with open('data.json',mode='r',encoding='utf-8') as file:
-    data=json.load(file)
-    print(data)
-
-with open('./data/20211201.json',mode='w',encoding='utf-8') as file:
-    file.write(str(data))
+try:
+    print('a')
+    t=time.perf_counter()
+    threadUpdate=threading.Thread(target=updateData,args=(1,))
+    threadUpdate.start()
+    for i in range(1,5):
+        print(time.perf_counter()-t)
+    print('load')
+    threadUpdate.end()
+except:
+    print('error')
