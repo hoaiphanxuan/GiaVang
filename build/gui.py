@@ -4,7 +4,7 @@ from pathlib import Path
 
 from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, ttk
 import os, sys
 lib_path = os.path.abspath(os.path.join('../client'))
 # thêm thư mục cần load vào trong hệ thống
@@ -67,35 +67,134 @@ button_14 = Button( window4, text=today, font="Times 24", cursor="hand2", bg="#c
 )
 button_14.place( x=40.0, y=151.9999999999999, width=286.0, height=58.0)
 
+def LoaiVang():
+    OPTIONS = [
+    "Vàng SJC",
+    "Vàng SJC 1L",
+    "Vàng nhẫn SJC 99,99 0,5 chỉ",
+    "Vàng nhẫn SJC 99,99 1 chỉ, 2 chỉ, 5 chỉ",
+    "Vàng nữ trang 99,99%",
+    "Vàng nữ trang 99%",
+    "Vàng nữ trang 75%",
+    "Vàng nữ trang 58,3%",
+    "Vàng nữ trang 41,7%",
+    "AVPL / DOJI CT buôn",
+    "AVPL / DOJI CT lẻ",
+    "AVPL / DOJI HCM buôn",
+    "AVPL / DOJI HCM lẻ",
+    "AVPL / DOJI ĐN buôn",
+    "AVPL / DOJI ĐN lẻ",
+    "AVPL / DOJI HN buôn",
+    "AVPL / DOJI HN lẻ",
+    "Nguyên liêu 9999 - HN",
+    "Nguyên liêu 999 - HN",
+    "Kim Ngưu",
+    "Kim Thần Tài",
+    "Lộc Phát Tài",
+    "Hưng Thịnh Vượng",
+    "Nhẫn H.T.V",
+    "Nguyên liệu 99.99",
+    "Nguyên liệu 9999",
+    "Nguyên liệu 99.9",
+    "Nguyên liệu 999",
+    "Nguyên liệu 999",
+    "Nữ trang 99.99",
+    "Nữ trang 99.9",
+    "Nữ trang 99",
+    "Nữ trang 18k",
+    "Nữ trang 16k",
+    "Nữ trang 68",
+    "Nữ trang 14k",
+    "Nữ trang 68",
+    "Nữ trang 10k",
+    ] 
+    def selected(event):
+        print("type: " +ComboLV.get())
+
+    ComboLV = ttk.Combobox(window4, value=OPTIONS, width=20, font="Times 14")
+    ComboLV.place(x=390, y=151, width=260.0, height=58.0)
+    ComboLV.bind("<<ComboboxSelected>>", selected)
+
 button_24 = Button( window4, cursor="hand2", bg="#cbdad9", activebackground="#cbdad9", borderwidth=0, highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
+    command=lambda: LoaiVang(),
     relief="flat"
 )
 button_24.place(x=390, y=151, width=260.0, height=58.0)
 
+def Khuvuc():
+    OPTIONS = [
+    "Long Xuyên",
+    "Bạc Liêu",
+    "Biên Hòa",
+    "Cà Mau",
+    "Hà Nội",
+    "Hồ Chí Minh",
+    "Miền Tây",
+    "Nha Trang",
+    "Quãng Ngãi",
+    "Đà  Nẵng",
+    "Bình Phước",
+    "Hạ Long",
+    "Phan Rang",
+    "Quảng Nam",
+    "Quy Nhơn",
+    "Huế",
+    "Nhẫn DOJI Hưng Thịnh Vượng",
+    "MARITIME BANK",
+    "SACOMBANK",
+    "Mi Hồng SJC",
+    "Ngọc Hải SJC HCM",
+    "Ngọc Hải SJC Long An",
+    "Ngọc Hải SJC Tân Hiệp",
+    "PHÚ QUÝ SJC",
+    "SPOT GOLD",
+    "OIL",
+    "Nhẫn PHÚ QUÝ 24K",
+    "Mi Hồng 999",
+    "Nhẫn SJC 99,99",
+    "Ngọc Hải 24K HCM",
+    "Ngọc Hải 24K Long An",
+    "Ngọc Hải 24K Tân Hiệp",
+    "Mi Hồng 985",
+    "Mi Hồng 980",
+    "Ngọc Hải 17K HCM",
+    "Ngọc Hải 17K Long An",
+    "Ngọc Hải 17K Tân Hiệp",
+    "Mi Hồng 750",
+    "Mi Hồng 680",
+    "Mi Hồng 610",
+    "Mi Hồng 950",
+    ] 
+    def selected(event):
+        print("brand: " + ComboKV.get())
+
+    ComboKV = ttk.Combobox(window4, value=OPTIONS, width=20, font="Times 14")
+    ComboKV.place(x=710.0, y=151, width=260.0, height=58.0)
+    ComboKV.bind("<<ComboboxSelected>>", selected)
+
 button_34 = Button(window4, cursor="hand2",bg="#cbdad9",activebackground="#cbdad9",borderwidth=0, highlightthickness=0, 
-    command=lambda: print("button_3 clicked"),
+    command=lambda: Khuvuc(),
     relief="flat"
 )
 button_34.place( x=710.0, y=151, width=260.0, height=58.0)
 
 button_image_44 = PhotoImage(file=relative_to_assets("button_4.png"))
 button_44 = Button( window4, cursor="hand2", image=button_image_44, bg="#a9c1c0", activebackground="#a9c1c0", borderwidth=0, highlightthickness=0,
-    command=lambda: print("button_4 clicked"), 
+    command=lambda: print("button_tìm kiếm clicked"), 
     relief="flat"
 )
 button_44.place(x=1021.0, y=143.9999999999999, width=60.021484375, height=66.0)
 
 button_image_54 = PhotoImage(file=relative_to_assets("button_5.png"))
 button_54 = Button( window4, cursor="hand2", image=button_image_54,  bg="#a9c1c0", activebackground="#a9c1c0", borderwidth=0, highlightthickness=0,
-    command=lambda: print(cal.get()),
+    command=lambda: print("button_làm mới clicked"),
     relief="flat"
 )
 button_54.place(x=1112.0, y=151.9999999999999, width=56.0, height=58.0)
 
 button_image_64 = PhotoImage( file=relative_to_assets("button_6.png"))
 button_64 = Button(window4, cursor="hand2",image=button_image_64, bg="#a9c1c0",activebackground="#a9c1c0", borderwidth=0, highlightthickness=0,
-    command=lambda: print("button_6 clicked"),
+    command=lambda: print("button_ngắt kết nối clicked"),
     relief="flat"
 )
 button_64.place( x=965, y=21, width=255.0, height=66.0)
