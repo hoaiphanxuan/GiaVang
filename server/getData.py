@@ -42,3 +42,7 @@ def updateDataEvery30Min(a):
 		dataWeb=getDataFromWeb()
 		with open(filepath,mode='w',encoding='UTF-8') as file:
 			json.dump(dataWeb,file)
+
+today=date.today()
+d1=today.strftime("%Y%m%d")
+print(d1)

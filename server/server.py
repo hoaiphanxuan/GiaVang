@@ -10,7 +10,7 @@ print("Host Add "+hostAdd)
 
 # hostPort=int(input('Chon Port muon su dung:'))
 
-hostPort=63213
+hostPort=63220
 
 soc=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
 #Ràng buộc địa chỉ (tên máy chủ, số cổng) vào socket.s
@@ -18,17 +18,21 @@ soc.bind((hostAdd,hostPort))
 soc.listen(1)
 
 def handleClient(server,clientAdd):
-    print("Client Address: ",clientAdd)
-    
-    msg=server.recv(1024).decode()
-    server.sendall(msg.encode())
+    while(1):
+        print("Client Address: ",clientAdd)
+        
+        msg=server.recv(1024).decode()
+        server.sendall(msg.encode())
+        res=0
+        if(msg=='login'):
+            res=login(server)
+        elif(msg=='sign up'):
+            res=signUp(server)
+        elif(msg=="x"):
+            pass
+        if(res==1 and msg=='login'):
+            break;
 
-    if(msg=='login'):
-        login(server)
-    elif(msg=='sign up'):
-        signUp(server)
-    elif(msg=="x"):
-        pass
     chat(server)
     print("Client :",clientAdd , "end.")
     soc.close()
@@ -42,22 +46,25 @@ def login(server):
     print("Username: ", username)
     print("Pass:", password)
 
-    checkLogin(server,username,password)
+    return checkLogin(server,username,password)
 
    
 def checkLogin(server, username, password):
     with open('account.json',encoding="utf-8") as acc:
         data=json.load(acc)
         for user in data:
-            if(user['username']==username and user['pass']==password):
-                server.sendall("Dang nhap thanh cong".encode())
-                server.recv(1024)
-            elif(user['username']==username):
-                server.sendall('Mat khau khong dung'.encode())
-                server.recv(1024)
-            else:
-                server.sendall('Khong tim thay tai khoan'.encode())
-                server.recv(1024)
+            if(user['username']==username ):
+                if( user['pass']==password):
+                    server.sendall("1".encode())    #ok
+                    server.recv(1024)
+                    return 1
+                else:
+                    server.sendall('2'.encode())    #sai mk
+                    server.recv(1024)
+                    return 2
+        server.sendall('3'.encode()) #Khong tim thay tai khoan
+        server.recv(1024)
+        return 3
                       
 
 def signUp(server):
@@ -70,7 +77,7 @@ def signUp(server):
     print("Username: ", username)
     print("Pass:", password)
 
-    findAndInsertUserToFile(server,username,password)
+    return findAndInsertUserToFile(server,username,password)
 
 def findAndInsertUserToFile(server,username,password):
     lisUser=[]
@@ -78,17 +85,18 @@ def findAndInsertUserToFile(server,username,password):
         data=json.load(acc)
         for user in data:
             if(user['username']==username):
-               server.sendall('Tài khoản đã tồn tại'.encode())
+               server.sendall('2'.encode())     #tai khoan da ton tai
                server.recv(1024)
-               return 0
+               return 2
             else:
                 lisUser.append(user)
         dic={"username":f"{username}","pass":f"{password}"}
         lisUser.insert(0,dic)
     with open('account.json',mode='w',encoding="utf-8") as acc:
         json.dump(lisUser,acc)
-    server.sendall('Đăng ký tài khoản thành công'.encode())
+    server.sendall('1'.encode())        #tao tai khoan thanh cong
     server.recv(1024)
+    return 1
 
 def chat(server):
     while (1):
@@ -109,7 +117,7 @@ while(nClient<10):
         thr = threading.Thread(target=handleClient, args=(server,clientAdd))
         thr.daemon = False
         thr.start()
-
+        
         quit=input()
         if(quit=='x'):
             break

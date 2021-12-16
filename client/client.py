@@ -1,22 +1,22 @@
 import socket
 FORMAT = "UTF8"
+
 # serverAdd = input("Server Add:")
 # serverPort = int(input("Server Port:"))
 
 serverAdd='192.168.1.6'
-serverPort=63213
+serverPort=63220
 
 
+global client
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
 
-def login(client):
-    while True:
-        username='hoaihcb1'   #input("username:")
-        password='phanxuan' #input("password:")
-        if(username != '' and password !=''):
-            break
-        else:
-            print('Tai khoan va mat khau khong duoc de trong')
+def login(username,password):
+    client.sendall('login'.encode())
+    client.recv(1024)
+    if(username == '' or password ==''):
+        print('Tai khoan va mat khau khong duoc de trong')
+        return '0'
 
     client.send(username.encode())
     client.recv(1024)
@@ -27,16 +27,17 @@ def login(client):
     msg=client.recv(1024).decode()
     client.sendall(msg.encode())
     print(msg)
+    return msg
     
-def signUp(client):
-    username=input('Username:')
-    password=input('Password:')
+def signUp(username,password):
+    client.sendall('sign up'.encode())
+    client.recv(1024)
+    # username=input('Username:')
+    # password=input('Password:')
 
-    while True:
-        if(username != '' and password !=''):
-            break
-        else:
-            print('Tai khoan va mat khau khong duoc de trong')
+    if(username == '' or password ==''):
+        print('Tai khoan va mat khau khong duoc de trong')
+        return '0'
     
     client.send(username.encode())
     client.recv(1024)
@@ -47,6 +48,7 @@ def signUp(client):
     msg=client.recv(1024).decode()
     client.sendall(msg.encode())
     print(msg)
+    return msg
 
 def chat(client):
     while(1):
@@ -59,18 +61,7 @@ def chat(client):
         if(msg == 'x'):
             return
 
-try:
-    client.connect((serverAdd, serverPort))
-    client.send('sign up'.encode(FORMAT))
-    msg=client.recv(1024).decode()
-    signUp(client)
-    chat(client)
-    
-
-except:  # Bắt trường hợp server bị đóng
-    print("Error")
 #.......
 
-client.close()
 
-input()
+
