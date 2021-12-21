@@ -98,8 +98,11 @@ def chat(server):
     msg=None
     while(msg != 'x'):
         l=recvList(server)
-        listt=Search(l[0],l[1],convert(l[2]))
-        sendList(server,listt)
+        listt, c = Search(l[0],l[1],convert(l[2]))
+        server.send(str(c).encode('utf-8'))
+        print(c)
+        for i in range (c):
+            sendList(server,listt[i])
 
 def sendList(server, list):
     for item in list:
@@ -145,10 +148,22 @@ def Search(type,area,date):
     checkExistFile(date)
     with open('data.json',mode='r',encoding='UTF-8') as data:
         getdata=json.load(data)
-        for i in range(len(getdata)): 
-            if((getdata[i]['brand']==area) & (getdata[i]['type']==type) & ((getdata[i]['day']==day))):
-                listt=[getdata[i]['type'],getdata[i]['sell'],getdata[i]['buy'],getdata[i]['company'],getdata[i]['brand'],getdata[i]['updated']]
-                return listt
+        l=[]
+        c=0
+        if(area=='Tất cả'): 
+            for i in range(len(getdata)):
+                if((getdata[i]['type']==type) & (getdata[i]['day']==date)):
+                    listt=[getdata[i]['type'],getdata[i]['sell'],getdata[i]['buy'],getdata[i]['company'],getdata[i]['brand'],getdata[i]['updated']]
+                    c=c+1
+                    l.append(listt)
+        else:
+            for i in range(len(getdata)):
+                if((getdata[i]['type']==type) & (getdata[i]['day']==date) & (getdata[i]['brand']==area)):
+                    listt=[getdata[i]['type'],getdata[i]['sell'],getdata[i]['buy'],getdata[i]['company'],getdata[i]['brand'],getdata[i]['updated']]
+                    c=c+1
+                    l.append(listt)
+
+        return l, c
     listt=[" "," "," "," "," "," "]
     return listt
 

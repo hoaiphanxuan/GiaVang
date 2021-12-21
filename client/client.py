@@ -89,9 +89,13 @@ def chat(client):
         day=input("Nhap ngay thang nam(d/m/y): ")
         listt=[typee,area,day]
         sendList(client,listt)
-        l=recvList(client)
-        data = [{'type':l[0],'sell':l[1],'buy': l[2],'company': l[3],'brand': l[4],'update':l[5]}]
-        df=pd.DataFrame(data=data)
+        msg=client.recv(1024).decode() 
+        dic=[]
+        for i in range (int(msg)):
+            l=recvList(client)
+            data = {'Loại vàng':l[0],'Giá mua vào':l[2],'Giá bán ra': l[1],'Công ty': l[3],'Khu vực': l[4],'Ngày cập nhật':l[5]}
+            dic.append(data)
+        df=pd.DataFrame(data=dic)   
         print(df)
     
 try:
