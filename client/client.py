@@ -5,7 +5,7 @@ FORMAT = "UTF8"
 # serverPort = int(input("Server Port:"))
 
 serverAdd='192.168.1.6'
-serverPort=63220
+serverPort=63221
 
 
 global client
