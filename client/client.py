@@ -1,22 +1,46 @@
 import socket
-FORMAT = "UTF8"
+import pandas as pd
 
+FORMAT = "UTF8"
 # serverAdd = input("Server Add:")
 # serverPort = int(input("Server Port:"))
 
 serverAdd='192.168.1.6'
-serverPort=63221
+serverPort=63227
 
 
-global client
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+def sendList(client, list):
 
-def login(username,password):
-    client.sendall('login'.encode())
-    client.recv(1024)
-    if(username == '' or password ==''):
-        print('Tai khoan va mat khau khong duoc de trong')
-        return '0'
+    for item in list:
+        client.sendall(item.encode(FORMAT))
+        #wait response
+        client.recv(1024)
+
+    msg = "end"
+    client.send(msg.encode(FORMAT))
+
+def recvList(client):
+    list = []
+
+    item = client.recv(1024).decode(FORMAT)
+
+    while (item != "end"):
+        
+        list.append(item)
+        #response
+        client.sendall(item.encode(FORMAT))
+        item = client.recv(1024).decode(FORMAT)
+    
+    return list
+def login(client):
+    while True:
+        username='hoaihcb1'   #input("username:")
+        password='phanxuan' #input("password:")
+        if(username != '' and password !=''):
+            break
+        else:
+            print('Tai khoan va mat khau khong duoc de trong')
 
     client.send(username.encode())
     client.recv(1024)
@@ -27,17 +51,16 @@ def login(username,password):
     msg=client.recv(1024).decode()
     client.sendall(msg.encode())
     print(msg)
-    return msg
     
-def signUp(username,password):
-    client.sendall('sign up'.encode())
-    client.recv(1024)
-    # username=input('Username:')
-    # password=input('Password:')
+def signUp(client):
+    username=input('Username:')
+    password=input('Password:')
 
-    if(username == '' or password ==''):
-        print('Tai khoan va mat khau khong duoc de trong')
-        return '0'
+    while True:
+        if(username != '' and password !=''):
+            break
+        else:
+            print('Tai khoan va mat khau khong duoc de trong')
     
     client.send(username.encode())
     client.recv(1024)
@@ -48,20 +71,39 @@ def signUp(username,password):
     msg=client.recv(1024).decode()
     client.sendall(msg.encode())
     print(msg)
-    return msg
 
 def chat(client):
-    while(1):
-            
-        msg = input('Client: ')
-        client.send(msg.encode(FORMAT))
-        msg=client.recv(1024).decode()
+    #while(1):
+           
+        #msg = input('Client: ')
+        #client.send(msg.encode(FORMAT))
+        #msg=client.recv(1024).decode()    
+        #print('Server:',msg)
+        #if(msg == 'x'):
+            #return
+    print("client address:",client.getsockname())
+    msg=None
+    while(msg!='x'):
+        typee=input("Nhap loai vang: ")
+        area=input("Nhap dia chi: ")
+        day=input("Nhap ngay thang nam(d/m/y): ")
+        listt=[typee,area,day]
+        sendList(client,listt)
+        l=recvList(client)
+        data = [{'type':l[0],'sell':l[1],'buy': l[2],'company': l[3],'brand': l[4],'update':l[5]}]
+        df=pd.DataFrame(data=data)
+        print(df)
         
-        print('Server:',msg)
-        if(msg == 'x'):
-            return
+# try:
+#     client.connect((serverAdd, serverPort))
+#     #client.send('sign up'.encode(FORMAT))
+#     #msg=client.recv(1024).decode()
+#     #signUp(client)
+#     #chat(client)
+    
 
-#.......
+# except:  # Bắt trường hợp server bị đóng
+#     print("Error")
+# #.......
 
-
-
+# client.close()
