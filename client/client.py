@@ -6,7 +6,7 @@ FORMAT = "UTF8"
 # serverPort = int(input("Server Port:"))
 
 serverAdd='192.168.1.6'
-serverPort=63227
+serverPort=63222
 
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
@@ -84,26 +84,30 @@ def chat(client):
     print("client address:",client.getsockname())
     msg=None
     while(msg!='x'):
-        typee=input("Nhap loai vang: ")
-        area=input("Nhap dia chi: ")
-        day=input("Nhap ngay thang nam(d/m/y): ")
-        listt=[typee,area,day]
-        sendList(client,listt)
-        l=recvList(client)
-        data = [{'type':l[0],'sell':l[1],'buy': l[2],'company': l[3],'brand': l[4],'update':l[5]}]
-        df=pd.DataFrame(data=data)
-        print(df)
-        
-# try:
-#     client.connect((serverAdd, serverPort))
-#     #client.send('sign up'.encode(FORMAT))
-#     #msg=client.recv(1024).decode()
-#     #signUp(client)
-#     #chat(client)
+        # typee=input("Nhap loai vang: ")
+        # area=input("Nhap dia chi: ")
+        # day=input("Nhap ngay thang nam(d/m/y): ")
+        # listt=[typee,area,day]
+        # sendList(client,listt)
+        # l=recvList(client)
+        # data = [{'type':l[0],'sell':l[1],'buy': l[2],'company': l[3],'brand': l[4],'update':l[5]}]
+        # df=pd.DataFrame(data=data)
+        # print(df)
+        msg=client.recv(4096).decode()
+        print(msg)
+    
+try:
+    client.connect((serverAdd, serverPort))
+    #client.send('sign up'.encode(FORMAT))
+    #msg=client.recv(1024).decode()
+    #signUp(client)
+    chat(client)
     
 
-# except:  # Bắt trường hợp server bị đóng
-#     print("Error")
-# #.......
+except:  # Bắt trường hợp server bị đóng
+    print("Error")
+#.......
 
-# client.close()
+client.close()
+
+input()

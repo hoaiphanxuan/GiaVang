@@ -19,10 +19,10 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 
 
-try:
-    client.connect((serverAdd, serverPort))
-except:  # Bắt trường hợp server bị đóng
-    print("Error")
+# try:
+#     client.connect((serverAdd, serverPort))
+# except:  # Bắt trường hợp server bị đóng
+#     print("Error")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)

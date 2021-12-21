@@ -36,49 +36,49 @@ from datetime import date
 
 #####list xổ xuống
 
-from tkcalendar import Calendar, DateEntry
-master = Tk()
-master.geometry("1000x1000")
-#master.configure(bg = "#A9C1C0")
-f1=Frame(master)
-f2=Frame(master)
+# from tkcalendar import Calendar, DateEntry
+# master = Tk()
+# master.geometry("1000x1000")
+# #master.configure(bg = "#A9C1C0")
+# f1=Frame(master)
+# f2=Frame(master)
 
-f1.grid(row=0, column=0, sticky='news')
-f2.grid(row=0, column=0, sticky='news')
-
-
-variable = StringVar(master)
-variable.set("xxx") # default value
-
-bg=PhotoImage(file='1.png')
-bg_1=Label(f1,image=bg)
-bg_1.pack()
-
-today= str (date.today())
-year=int(today[0:4])
-month=int(today[5:7])
-day=int(today[-2:])
-cal = Calendar(f1,
-               font="Times 14", selectmode='day',
-               cursor="hand2", year=year, month=month, day=day)
-cal.place(x=100,y=100,width=500,height=500)
+# f1.grid(row=0, column=0, sticky='news')
+# f2.grid(row=0, column=0, sticky='news')
 
 
-b1=Button(f2,text='back',command= lambda: print(cal.selection_get()),bg='#d7e2e2', activebackground='#d7e2e2', borderwidth=0, highlightthickness=0,)
-b1.place(x=100,y=100,width=10,height=10)
-Button(f1,text='next',command= lambda: f2.tkraise()).place(x=0,y=0,width=10,height=10)
+# variable = StringVar(master)
+# variable.set("xxx") # default value
+
+# bg=PhotoImage(file='1.png')
+# bg_1=Label(f1,image=bg)
+# bg_1.pack()
+
+# today= str (date.today())
+# year=int(today[0:4])
+# month=int(today[5:7])
+# day=int(today[-2:])
+# cal = Calendar(f1,
+#                font="Times 14", selectmode='day',
+#                cursor="hand2", year=year, month=month, day=day)
+# cal.place(x=100,y=100,width=500,height=500)
+
+
+# b1=Button(f2,text='back',command= lambda: print(cal.selection_get()),bg='#d7e2e2', activebackground='#d7e2e2', borderwidth=0, highlightthickness=0,)
+# b1.place(x=100,y=100,width=10,height=10)
+# Button(f1,text='next',command= lambda: f2.tkraise()).place(x=0,y=0,width=10,height=10)
 
 
 
-f1.tkraise()
+# f1.tkraise()
 
-mainloop()
+# mainloop()
 
-# cal.pack(fill="both", expand=True)
-# w = OptionMenu(master, variable, "d","x")
-# print (variable.get())
+cal.pack(fill="both", expand=True)
+w = OptionMenu(master, variable, "d","x")
+print (variable.get())
 
-#cal.pack()
+cal.pack()
 
 
 # def updateData(a):
