@@ -17,16 +17,12 @@ print("Host Add "+hostAdd)
 
 # hostPort=int(input('Chon Port muon su dung:'))
 
-<<<<<<< HEAD
-hostPort=63227
-=======
 hostPort=63210
->>>>>>> 8d97307f19a475402cdb546fc3e94536fd8cce19
 
 soc=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
 #Ràng buộc địa chỉ (tên máy chủ, số cổng) vào socket.s
 soc.bind((hostAdd,hostPort))
-soc.listen(1)
+soc.listen()
 
 def login(server):
     username = server.recv(1024).decode()
@@ -102,18 +98,10 @@ def chat(server):
     msg=None
     while(msg != 'x'):
         l=recvList(server)
-<<<<<<< HEAD
-        listt=Search(l[0],l[1],convert(l[2]))
-        sendList(server,listt)
-        
-    
-=======
         listt, c = Search(l[0],l[1],convert(l[2]))
         server.send(str(c).encode('utf-8'))
-        print(c)
         for i in range (c):
             sendList(server,listt[i])
->>>>>>> 8d97307f19a475402cdb546fc3e94536fd8cce19
 
 def sendList(server, list):
     for item in list:
@@ -159,12 +147,6 @@ def Search(type,area,date):
     checkExistFile(date)
     with open('data.json',mode='r',encoding='UTF-8') as data:
         getdata=json.load(data)
-<<<<<<< HEAD
-        for i in range(len(getdata)): 
-            if((getdata[i]['brand']==area) & (getdata[i]['type']==type) & ((getdata[i]['day']==day))):
-                listt=[getdata[i]['type'],getdata[i]['sell'],getdata[i]['buy'],getdata[i]['company'],getdata[i]['brand'],getdata[i]['updated']]
-                return listt
-=======
         l=[]
         c=0
         if(area=='Tất cả'): 
@@ -179,11 +161,13 @@ def Search(type,area,date):
                     listt=[getdata[i]['type'],getdata[i]['sell'],getdata[i]['buy'],getdata[i]['company'],getdata[i]['brand'],getdata[i]['updated']]
                     c=c+1
                     l.append(listt)
+    print(c)
+    if(c==0):
+        c+=1
+        listt=["no data","no data","no data","no data","no data","no data"]
+        l.append(listt)
+    return l, c
 
-        return l, c
->>>>>>> 8d97307f19a475402cdb546fc3e94536fd8cce19
-    listt=[" "," "," "," "," "," "]
-    return listt
 
 def convert(date):
     date_object = datetime.strptime(date, "%d/%m/%Y")
@@ -191,17 +175,23 @@ def convert(date):
     return str(a)
 
 def handleClient(server,clientAdd):
-    print("Client Address: ",clientAdd)
-    chat(server)
-    print("Client :",clientAdd , "end.")
-    soc.close()
+    print("Client Address: ",clientAdd, " connected")
+    msg=None
+    while(msg != 'x'):
+        l=recvList(server)
+        listt, c = Search(l[0],l[1],convert(l[2]))
+        server.send(str(c).encode('utf-8'))
+        for i in range (c):
+            sendList(server,listt[i])
+    print("client" , clientAdd, " finished")
+    print(server.getsockname(), "closed")
+    server.close()
     
 nClient = 0
 while(nClient<10):       
     try:
         server, clientAdd =soc.accept()
         #threading.Thread(target=lambda: updateDataEvery30Min()).start()
-        handleClient(server,clientAdd)
         thr = threading.Thread(target=handleClient, args=(server,clientAdd))
         thr.daemon = False
         thr.start()
