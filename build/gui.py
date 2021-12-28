@@ -43,6 +43,32 @@ window4 = Frame(root)
 for frame in (window1, window2, window3, window4):
     frame.grid(row=0, column=0, sticky='news')
 
+#GUI welcom
+bg1=PhotoImage(file='Welcom.png')
+label_1=Label(window1,image=bg1)
+label_1.pack()
+
+entry_ip_welcom = Entry(window1,font="Times 18", bd=0, bg="#FFFFFF", highlightthickness=0)
+entry_ip_welcom.place(x=605.00634765625, y=328.2843017578125, width=556.5, height=60.89031982421875)
+
+entry_port_welcom = Entry(window1,font="Times 18",bd=0,bg="#FFFFFF",highlightthickness=0)
+entry_port_welcom.place(x=605.00634765625,y=477.361328125,width=556.5,height=60.8902587890625)
+
+def ketnoi():
+    serverAdd = (entry_ip_welcom.get())
+    serverPort = (int(entry_port_welcom.get()))
+    try:
+        client.connect((serverAdd, serverPort))
+    except:  # Bắt trường hợp server bị đóng
+        print("Error")
+    raise_frame(window2)
+
+
+button_welcom = PhotoImage(
+    file=relative_to_assets("bt_welcom.png"))
+button_1_wc = Button(window1, image=button_welcom,borderwidth=0,bg="#cbdad9", activebackground="#cbdad9",highlightthickness=0,
+    command=lambda: ketnoi(), relief="flat")
+button_1_wc.place(x=763.0,y=561.0,width=239.0,height=77.0)
 
 ########GUI man hinh hien thi ket qua
 bg4=PhotoImage(file='TraCuu.png')
@@ -205,9 +231,8 @@ button_22 = Button(window2,cursor='hand2',image=button_image_22,bg='#d7e2e2',act
 button_22.place(x=749.0,  y=656.0, width=350.3861083984375, height=36.60003662109375)
 
 
-
 root.resizable(False, False)
-raise_frame(window4)
+raise_frame(window1)
 root.mainloop()
 client.close()
 
