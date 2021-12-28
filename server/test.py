@@ -74,11 +74,11 @@ from datetime import date
 
 # mainloop()
 
-cal.pack(fill="both", expand=True)
-w = OptionMenu(master, variable, "d","x")
-print (variable.get())
+# cal.pack(fill="both", expand=True)
+# w = OptionMenu(master, variable, "d","x")
+# print (variable.get())
 
-cal.pack()
+# cal.pack()
 
 
 # def updateData(a):
@@ -196,44 +196,44 @@ cal.pack()
 
 
 
-try:
-    import tkinter as tk
-    from tkinter import ttk
-except ImportError:
-    import Tkinter as tk
-    import ttk
+# try:
+#     import tkinter as tk
+#     from tkinter import ttk
+# except ImportError:
+#     import Tkinter as tk
+#     import ttk
 
-from tkcalendar import Calendar, DateEntry
+# from tkcalendar import Calendar, DateEntry
 
-def example1():
-    def print_sel():
-        print(cal.selection_get())
+# def example1():
+#     def print_sel():
+#         print(cal.selection_get())
 
-    top = tk.Toplevel(root)
+#     top = tk.Toplevel(root)
 
-    cal = Calendar(top,
-                   font="Arial 14", selectmode='day',
-                   cursor="hand1", year=2018, month=2, day=5)
-    cal.pack(fill="both", expand=True)
-    ttk.Button(top, text="ok", command=print_sel).pack()
+#     cal = Calendar(top,
+#                    font="Arial 14", selectmode='day',
+#                    cursor="hand1", year=2018, month=2, day=5)
+#     cal.pack(fill="both", expand=True)
+#     ttk.Button(top, text="ok", command=print_sel).pack()
 
-def example2():
-    top = tk.Toplevel(root)
+# def example2():
+#     top = tk.Toplevel(root)
 
-    ttk.Label(top, text='Choose date').pack(padx=10, pady=10)
+#     ttk.Label(top, text='Choose date').pack(padx=10, pady=10)
 
-    cal = DateEntry(top, width=12, background='darkblue',
-                    foreground='white', borderwidth=2)
-    cal.pack(padx=10, pady=10)
+#     cal = DateEntry(top, width=12, background='darkblue',
+#                     foreground='white', borderwidth=2)
+#     cal.pack(padx=10, pady=10)
 
-root = tk.Tk()
-s = ttk.Style(root)
-s.theme_use('clam')
+# root = tk.Tk()
+# s = ttk.Style(root)
+# s.theme_use('clam')
 
-ttk.Button(root, text='Calendar', command=example1).pack(padx=10, pady=10)
-ttk.Button(root, text='DateEntry', command=example2).pack(padx=10, pady=10)
+# ttk.Button(root, text='Calendar', command=example1).pack(padx=10, pady=10)
+# ttk.Button(root, text='DateEntry', command=example2).pack(padx=10, pady=10)
 
-root.mainloop()
+# root.mainloop()
 
 
 
@@ -270,3 +270,35 @@ root.mainloop()
 
 # raise_frame(f1)
 # root.mainloop()
+
+# import tkinter as tk
+# from tkinter import ttk
+
+# def show():
+
+#     tempList = [['Jim', '0.33'], ['Dave', '0.67'], ['James', '0.67'], ['Eden', '0.5']]
+#     tempList.sort(key=lambda e: e[1], reverse=True)
+
+#     for i, (name, score) in enumerate(tempList, start=1):
+#         listBox.insert("", "end", values=(i, name, score))
+
+# scores = tk.Tk() 
+# label = tk.Label(scores, text="High Scores", font=("Arial",30)).grid(row=0, columnspan=3)
+# # create Treeview with 3 columns
+# cols = ('Position', 'Name', 'Score')
+# listBox = ttk.Treeview(scores, columns=cols, show='headings')
+# # set column headings
+# for col in cols:
+#     listBox.heading(col, text=col)    
+# listBox.grid(row=1, column=0, columnspan=2)
+
+# showScores = tk.Button(scores, text="Show scores", width=15, command=show).grid(row=4, column=0)
+# closeButton = tk.Button(scores, text="Close", width=15, command=exit).grid(row=4, column=1)
+
+# scores.mainloop()
+
+a="sssssssss"
+try:
+	b=int(a)
+except:
+	print("error")

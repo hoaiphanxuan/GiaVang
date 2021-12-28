@@ -1,142 +1,17 @@
-import socket
-import pandas as pd
 
-FORMAT = "UTF8"
-
-##lib of gui
 import ctypes 
 from pathlib import Path
 
 from tkinter import *
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, ttk
 import os, sys
-
+# lib_path = os.path.abspath(os.path.join('../client'))
+# # thêm thư mục cần load vào trong hệ thống
+# sys.path.append(lib_path)
+from client import *
 import time
 from tkcalendar import Calendar
 from datetime import date, datetime
-
-
-
-
-def sendList(client, list):
-
-    for item in list:
-        client.sendall(item.encode(FORMAT))
-        #wait response
-        client.recv(1024)
-        print(item)
-
-    msg = "end"
-    client.send(msg.encode(FORMAT))
-
-def recvList(client):
-    list = []
-
-    item = client.recv(1024).decode(FORMAT)
-
-    while (item != "end"):
-        if(item=="null"):
-            item="  "
-            
-        list.append(item)
-        print(list)
-        #response
-        client.sendall(item.encode(FORMAT))
-        item = client.recv(1024).decode(FORMAT)
-        print('check2')
-    client.send('end'.encode())
-    return list
-def login(username,password):
-    try:
-        client.sendall('login'.encode())
-        client.recv(1024)
-        if(username == '' or password ==''):
-            print('Tai khoan va mat khau khong duoc de trong')
-            return '0'
-
-        client.send(username.encode())
-        client.recv(1024)
-
-        client.send(password.encode())
-        client.recv(1024)
-
-        msg=client.recv(1024).decode()
-        client.sendall(msg.encode())
-        print(msg)
-        return msg
-    except:
-        return '-1'
-def signUp(username,password):
-    try:
-        client.sendall('sign up'.encode())
-        client.recv(1024)
-
-        if(username == '' or password ==''):
-            print('Tai khoan va mat khau khong duoc de trong')
-            return '0'
-        
-        client.send(username.encode())
-        client.recv(1024)
-
-        client.send(password.encode())
-        client.recv(1024)
-
-        msg=client.recv(1024).decode()
-        client.sendall(msg.encode())
-        print(msg)
-        return msg
-    except:
-        return '-1'
-
-def chat(client, typee, area, day):
-    #while(1):
-           
-        #msg = input('Client: ')
-        #client.send(msg.encode(FORMAT))
-        #msg=client.recv(1024).decode()    
-        #print('Server:',msg)
-        #if(msg == 'x'):
-            #return
-    print("client address:",client.getsockname())
-    msg=None
-    while(msg!='x'):
-        # typee=input("Nhap loai vang: ")
-        # area=input("Nhap dia chi: ")
-        # day=input("Nhap ngay thang nam(d/m/y): ")
-        try:
-            listt=[typee,area,day]
-            print(listt)
-            sendList(client,listt)
-            msg=client.recv(1024).decode() 
-            dic=[]
-            dt=[]
-            for i in range (int(msg)):
-                l=recvList(client)
-                print(l)
-                dt.append(l)
-                data = {'Loại vàng':l[0],'Giá mua vào':l[2],'Giá bán ra': l[1],'Công ty': l[3],'Khu vực': l[4],'Ngày cập nhật':l[5]}
-                dic.append(data)
-            df=pd.DataFrame(data=dic)   
-            print(df)
-            return dt
-        except:
-            return ['NULL']
-# try:
-#     client.connect((serverAdd, serverPort))
-#     #client.send('sign up'.encode(FORMAT))
-#     #msg=client.recv(1024).decode()
-#     #signUp(client)
-#     # chat(client)
-    
-
-# except:  # Bắt trường hợp server bị đóng
-#     print("Error")
-# #.......
-
-
-
-
-
 
 
 OUTPUT_PATH = Path(__file__).parent
