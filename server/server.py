@@ -3,13 +3,17 @@ import json
 import socket
 import requests, json
 import os
-#from bs4 import BeautifulSoup
 from datetime import date
 import threading
 import time, traceback
 import time
 from datetime import datetime
 FORMAT = "UTF8"
+##lib gui
+from pathlib import Path
+from tkinter import *
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, ttk
+
 hostName=socket.gethostname()
 hostAdd=socket.gethostbyname(hostName)
 print("Host name "+hostName)
@@ -17,10 +21,10 @@ print("Host Add "+hostAdd)
 
 # hostPort=int(input('Chon Port muon su dung:'))
 
-hostPort=63212
+hostPort=63215
 global soc
 soc=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-#soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 #Ràng buộc địa chỉ (tên máy chủ, số cổng) vào socket.s
 soc.bind((hostAdd,hostPort))
 soc.listen()
@@ -91,6 +95,9 @@ def updateDataEvery30Min():
   delay=int(1800)	
   next_time = time.time() + delay
   while True:
+    global stopThread1
+    if stopThread1:
+        break
     time.sleep(max(0, next_time - time.time()))
     try:
         today=date.today()
@@ -109,7 +116,8 @@ def chat(server,clientAdd):
                 res=login(server)
             elif(msg=='sign up'):
                 res=signUp(server)
-            elif(msg=="x"):
+            elif(msg=="xxx"):
+                #server.shutdown(socket.SHUT_RDWR)
                 pass
             if(res==1 and msg=='login'):
                 break
@@ -117,6 +125,8 @@ def chat(server,clientAdd):
         msg=None
         while(msg != 'xxx'):
             l,msg=recvList(server)
+            if(msg=="xxx"):
+                break
             # temp=convert(l[2])
             # print(temp)
             listt, c = Search(l[0],l[1],l[2])
@@ -125,8 +135,8 @@ def chat(server,clientAdd):
             #print(c)
             for i in range (c):
                 sendList(server,listt[i])
-    except:
-        print("Server Close")
+    except Exception as s:
+        print(s)
 
 def sendList(server, list):
     for item in list:
@@ -144,7 +154,8 @@ def recvList(server):
     item = server.recv(1024).decode(FORMAT)
     if(item=="xxx"):
         print(clientAdd,'disconnect')
-        server.shutdown(socket.SHUT_RDWR)
+        #server.shutdown(socket.SHUT_RDWR)
+        return list,item
     while (item != "end"):
         print(item)  
         list.append(item)
@@ -217,21 +228,31 @@ def Search(type,area,dat):
     return listt
 
 
+global count
+count=0
 
 def handleClient(server,clientAdd):
     try:
         print("Client Address: ",clientAdd)
+        # if(count%2==0):
+        #     listBox.insert("", "end", values=clientAdd+('Kết nối',),tags=("chan",))
+        # else:
+        #     listBox.insert("", "end", values=clientAdd+('Kết nối',),tags=("le",))
+        # count+=1
+
         chat(server,clientAdd)
+
         print("Client :",clientAdd , "end.")
+        soc.close()
+        # if(count%2==0):
+        #     listBox.insert("", "end", values=clientAdd+('Ngắt kết nối',),tags=("chan",))
+        # else:
+        #     listBox.insert("", "end", values=clientAdd+('Ngắt kết nối',),tags=("le",))
+        # count+=1
     except:
-        print("error at handleClient")
+        # thr.join()
+        print('Errot at handle')
 
-
-from pathlib import Path
-
-from tkinter import *
-# Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
 
@@ -243,33 +264,62 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 
-
-
 root = Tk()
 root.title('Giá Vàng')
 root.geometry("1199x910")
 #root.configure(bg = "#A9C1C0")
 
+def raise_frame(frame):
+    frame.tkraise()
+
 window0 = Frame(root)
 window0.grid(row=0, column=0, sticky='news')
+raise_frame(window0)
 
+style = ttk.Style()
+style.theme_use("default")
+style.configure(
+    "Treeview",
+    background="#cbdad9",
+    foreground = "green",
+    rowheight=35,
+    fieldbackground="#DEFFF9"
+    )
+
+
+style.map("Treeview",background=[('selected','#FFB2B2')])
+
+cols = ('IP','Port','Hoạt động')
+listBox = ttk.Treeview(root, columns=cols, show='headings')
+# set column headings
+
+
+listBox.tag_configure('chan',background="#C7E4FF")
+listBox.tag_configure('le',background="#ffffff")
+
+for col in cols:
+    listBox.heading(col, text=col)    
+listBox.place(x=28, y=300,width=1150,height=595)
+
+# global endThread
+# endThread = False
 
 def runServer():
     nClient = 0
     while(nClient<10):       
         try:
-            global server
+            global server, clientAdd
             server, clientAdd =soc.accept()
-            #threading.Thread(target=lambda: updateDataEvery30Min()).start()
-            #handleClient(server,clientAdd)
+        
             global thr
             thr = threading.Thread(target=handleClient, args=(server,clientAdd))
             thr.daemon = False
             thr.start()
-            # if(soc.close()==True):
-            #     thr.stop()
-            #     thr.join()
-        except: #Bắt trường hợp client đóng kết nối đột ngột
+            global endThread 
+            if endThread:
+                break
+        except Exception as s: #Bắt trường hợp client đóng kết nối đột ngột
+            print(s)
             soc.close()
             break
             print("Error")
@@ -277,7 +327,6 @@ def runServer():
 
     print("End server")
 
-    #soc.close()
 
 thr2= threading.Thread(target=lambda: runServer())
 thr2.start()
@@ -295,30 +344,24 @@ textBox.place(x=60,y=175)
 textBox = Label(window0,text=hostPort, font="Times 22", background="#cbdad9",)
 textBox.place(x=495,y=175)
 
+
 def button1Fun():
     button_1.configure(state="disable")
+    for i in listBox.get_children():
+        listBox.delete(i)
+    window0.update()
+    endThread=True
+    thr2.join()
     server.shutdown(socket.SHUT_RDWR)
     soc.close()
     print("close all")
 
-button_image_1 = PhotoImage(
-    file=relative_to_assets("Button.png"))
-button_1 = Button(
-    image=button_image_1,cursor="hand2", bg="#a9c1c0", activebackground="#a9c1c0",
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: button1Fun(),
-    relief="flat"
-)
-button_1.place(
-    x=925,
-    y=155,
-    width=237.0,
-    height=85.0
-)
+
+button_image_1 = PhotoImage(file=relative_to_assets("Button.png"))
+button_1 = Button(image=button_image_1,cursor="hand2", bg="#a9c1c0", activebackground="#a9c1c0",borderwidth=0,highlightthickness=0,command=lambda: button1Fun(),relief="flat")
+button_1.place(x=925,y=155,width=237.0,height=85.0)
 
 
 root.resizable(False, False)
 root.mainloop()
-server.shutdown(socket.SHUT_RDWR)
 soc.close()
