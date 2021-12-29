@@ -194,7 +194,7 @@ listBox.place(x=21, y=282,width=1156,height=615)
 
 
 listBox.tag_configure('chan',background="#C7E4FF")
-listBox.tag_configure('le',background="#F4F4F4")
+listBox.tag_configure('le',background="#ffffff")
 
 
 def showInfo():
@@ -298,14 +298,7 @@ OPTIONS = [
 ComboLV = ttk.Combobox(window4, value=OPTIONS, width=20, font="Times 14")
 ComboLV.place(x=388, y=153, width=260.0, height=58.0)
 ComboLV.current(0)
-#ComboLV.bind("<<ComboboxSelected>>", selected)
 
-
-# button_24 = Button( window4, cursor="hand2", bg="#cbdad9", activebackground="#cbdad9", borderwidth=0, highlightthickness=0,
-#     command=lambda: lambda: LoaiVang(),
-#     relief="flat"
-# )
-# button_24.place(x=390, y=151, width=260.0, height=58.0)
 
 
 OPTIONS = [
@@ -360,13 +353,7 @@ ComboKV = ttk.Combobox(window4, value=OPTIONS, width=20, font="Times 14")
 ComboKV.place(x=708.0, y=153, width=260.0, height=58.0)
 ComboKV.current(0)
 
-# ComboKV.bind("<<ComboboxSelected>>", selected)
 
-# button_34 = Button(window4, cursor="hand2",bg="#cbdad9",activebackground="#cbdad9",borderwidth=0, highlightthickness=0, 
-#     command=lambda: print("button_3 clicked"),
-#     relief="flat"
-# )
-# button_34.place( x=710.0, y=151, width=260.0, height=58.0)
 
 button_image_44 = PhotoImage(file=relative_to_assets("button_4.png"))
 button_44 = Button( window4, cursor="hand2", image=button_image_44, bg="#a9c1c0", activebackground="#a9c1c0", borderwidth=0, highlightthickness=0,
@@ -384,14 +371,14 @@ button_54 = Button( window4, cursor="hand2", image=button_image_54,  bg="#a9c1c0
 )
 
 
-flag = 0
+flag1 = 0
 
 def funButtonDiscon():
-    client.send('xxx'.encode())
+    #client.send('xxx'.encode())
     client.close()
     raise_frame(window1)
-    global flag
-    flag = 1
+    global flag1
+    flag1 = 1
 
 button_54.place(x=1116.0, y=144.9999999999999, width=60.0, height=66.0)
 
@@ -501,6 +488,9 @@ def callLogin():
         ctypes.windll.user32.MessageBoxW(0, "Tài khoản và mật khẩu không được để trống", "Thông báo", 0)
     if(flag=='1'):
         raise_frame(window4)
+        for i in listBox.get_children():
+            listBox.delete(i)
+        window4.update()
     if(flag=='2'):
         ctypes.windll.user32.MessageBoxW(0, "Mật khẩu không đúng", "Thông báo", 0)
     if(flag=='3'):
@@ -512,7 +502,7 @@ button_12.place( x=771.0, y=560.0, width=265.0, height=78.0)
 
 ####### BUTTON ĐĂNG KÝ
 button_image_22 = PhotoImage(file=relative_to_assets("button_2.png"))
-button_22 = Button(window2,cursor='hand2',image=button_image_22,bg='#d7e2e2',activebackground='#d7e2e2',borderwidth=0,highlightthickness=0,command= lambda: raise_frame(window3),relief="flat")
+button_22 = Button(window2,cursor='hand2',image=button_image_22,bg='#d7e2e2',activebackground='#d7e2e2',borderwidth=0,highlightthickness=0,command= lambda: {raise_frame(window3)},relief="flat")
 button_22.place(x=749.0,  y=656.0, width=350.3861083984375, height=36.60003662109375)
 
 
@@ -526,7 +516,7 @@ serverAdd = StringVar()
 serverAdd.set("192.168.1.6")
 
 serverPort=StringVar()
-serverPort.set("63212")
+serverPort.set("63215")
 
 entry_ip_welcom = Entry(window1,textvariable = serverAdd,font="Times 22", bd=0, bg='#d7e2e2', highlightthickness=0)
 entry_ip_welcom.place(x=609.00634765625, y=333.2843017578125, width=550.5, height=56.89031982421875)
@@ -543,7 +533,7 @@ def ketnoi():
         client.connect((serverAdd, serverPort))
         raise_frame(window2)
     except:  # Bắt trường hợp server bị đóng
-        if flag==0:
+        if flag1==0:
             ctypes.windll.user32.MessageBoxW(0, "Không thể kết nối với Server!", "Thông báo", 0)
         else:
             ctypes.windll.user32.MessageBoxW(0, "Bạn cần chạy lại chương trình!", "Thông báo", 0)
@@ -561,6 +551,6 @@ button_1_wc.place(x=763.0,y=561.0,width=239.0,height=77.0)
 root.resizable(False, False)
 raise_frame(window1)
 root.mainloop()
+#client.send('xxx'.encode())
 client.close()
-
 
